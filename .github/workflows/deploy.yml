@@ -25,11 +25,14 @@ jobs:
       - name: Create deployment package
         run: |
           mkdir -p deploy-package
-          cp -r . deploy-package/
-          cd deploy-package
-          rm -rf .git .github node_modules
-          tar -czf ../deploy.tar.gz .
-          cd ..
+          rsync -av --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='deploy-package' \
+            --exclude='.env' \
+            --exclude='*.log' \
+            . deploy-package/
+          tar -czf deploy.tar.gz -C deploy-package .
           rm -rf deploy-package
 
       - name: Configure SSH
