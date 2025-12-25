@@ -67,12 +67,10 @@ jobs:
             rm /tmp/deploy.tar.gz
             
             # Create .env file with Cosmos DB connection
-            cat > .env << 'EOF'
-NODE_ENV=production
-PORT=3000
-DATABASE=${{ secrets.COSMOS_DB_CONNECTION }}
-LOG_LEVEL=info
-EOF
+            echo "NODE_ENV=production" > .env
+            echo "PORT=3000" >> .env
+            echo "DATABASE=${COSMOS_DB_CONNECTION}" >> .env
+            echo "LOG_LEVEL=info" >> .env
             
             # Stop existing containers
             docker-compose down || true
