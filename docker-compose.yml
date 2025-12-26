@@ -1,8 +1,5 @@
 version: '3.8'
 
-x-build-args: &build-args
-  DOCKER_BUILDKIT: 1
-
 services:
   pa11y-webservice:
     build: 
@@ -11,9 +8,14 @@ services:
     container_name: pa11y-webservice
     ports:
       - "3000:3000"
-    env_file:
-      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE=mongodb://mongo:27017/pa11y
+      - LOG_LEVEL=info
     restart: unless-stopped
+    depends_on:
+      - mongo
     networks:
       - pa11y-network
     logging:
@@ -28,6 +30,22 @@ services:
       retries: 3
       start_period: 40s
 
+  mongo:
+    image: mongo:6
+    container_name: pa11y-mongo
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - pa11y-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mongodb_data:
 
 networks:
   pa11y-network:

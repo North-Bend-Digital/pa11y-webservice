@@ -51,7 +51,6 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
-          COSMOS_DB_CONNECTION: ${{ secrets.COSMOS_DB_CONNECTION }}
         run: |
           # Copy deployment package to server
           scp -i ~/.ssh/deploy_key deploy.tar.gz $SSH_USER@$SSH_HOST:/tmp/
@@ -68,12 +67,6 @@ jobs:
             cd ${{ env.DEPLOY_PATH }}
             tar -xzf /tmp/deploy.tar.gz
             rm /tmp/deploy.tar.gz
-            
-            # Create .env file with Cosmos DB connection
-            echo "NODE_ENV=production" > .env
-            echo "PORT=3000" >> .env
-            echo "DATABASE=${COSMOS_DB_CONNECTION}" >> .env
-            echo "LOG_LEVEL=info" >> .env
             
             # Stop existing containers
             docker-compose down || true
